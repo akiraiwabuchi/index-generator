@@ -1,0 +1,11 @@
+{
+	"company": "Company Nanme",
+	"site": "Site Name",
+	"project": "Project Name",
+	"construction": "adaptive",
+	"device": {
+		"desktop": true,
+		"tablet": true,
+		"mobile": true
+	}
+}

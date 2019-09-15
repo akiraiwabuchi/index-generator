@@ -1,0 +1,32 @@
+{
+  "name": "makeindex",
+  "version": "0.1.0",
+  "description": "make index for page list.",
+  "main": "gulpfile.js",
+  "author": "akiraiwabuchi",
+  "license": "MIT",
+  "private": true,
+  "bugs": "https://github.com/akiraiwabuchi/makeindex/issues",
+  "keywords": [
+    "makeindex"
+  ],
+  "engines": {
+    "node": ">=8.0.0 <11.0.0"
+  },
+  "browserslist": [
+    "last 1 versions"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akiraiwabuchi/makeindex"
+  },
+  "scripts": {
+    "index": "gulp makeIndex"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "node-lcs": "^1.0.2",
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {}
+}
