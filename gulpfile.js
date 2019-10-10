@@ -1,17 +1,14 @@
 'use strict';
 
-const gulp = require('gulp');
-const lcs = require('node-lcs');
 const fs = require('fs');
-const config = require('./gulpconfig.json');
 
 async function makeIndex() {
 
 	// user settings
 
-	const htmldir = './html/';
-	const outputdir = htmldir;
-	const outputname = 'index.html';
+	var htmlPath = './html/';
+	var distPath = htmlPath;
+	var fileName = 'index.html';
 
 	const colorModeSet = {
 		light: {// Light Color
@@ -33,48 +30,61 @@ async function makeIndex() {
 			listGroupItemHover : ''
 		}
 	}
-	const colorMode = colorModeSet.dark;// Color Mode choice
+	var colorMode = colorModeSet.dark;// Color Mode choice
 
 	// Google Material Icons
-	const deviceIcons = ["devices","desktop_mac","phone_iphone","tablet_mac"];// デバイスのアイコン
-	const IconsResponsive = ["style","view_compact","mood","code"];// アイコン（Responsive）
-	const IconsAdaptive = ["style","","","view_compact","","mood","code"];// アイコン（Adaptive）
+	var deviceIcons = ["devices","desktop_mac","phone_iphone","tablet_mac"];// デバイスのアイコン
+
+	// config
+	const construction = 'adaptive';
 
 	// Prefixの指定
-	const prefixDev = 'd';// 開発
-	const prefixPage = 'p';// ページ
-	const prefixWork = 'w';// ワークスペース
-
-	// Prefixによるタイトルの設定
-	const DevTitle = 'Develop';
-	const DevTitleIcon = 'keyboard';// Google Material Iconsの設定
-	const PageTitle = 'Pages';
-	const PageTitleIcon = 'description';// Google Material Iconsの設定
-	const WorkTitle = 'Works';
-	const WorkTitleIcon = 'create';// Google Material Iconsの設定
+	var prefix = [
+		{
+			prefixName: 'd',
+			title: 'Develop',
+			titleIcon: 'keyboard',
+			fileIcon: ["style","","","view_compact","","mood","code"]
+		},
+		{
+			prefixName: 'p',
+			title: 'Pages',
+			titleIcon: 'description'
+		},
+		{
+			prefixName: 'w',
+			title: 'WorkSpace',
+			titleIcon: 'create'
+		}
+	]
 
 	// Suffixの設定（Adaptiveのみ機能）
-	const suffixDesktop = '-desktop.html';// Desktopの定義
-	const suffixMobile = '-mobile.html';// Mobileの定義
-	const suffixTablet = '-tablet.html';// Tabletの定義
+	var suffixDesktop = '-desktop.html';
+	var suffixMobile = '-mobile.html';
+	var suffixTablet = '-tablet.html';
+
+	// 共通削除文
+	var removeTitle = ' | TEST FILE';
+
+	// favicon
+	var faviconPath = '';
 
 	// 文言設定
-	const pageTitle = config.company + ' ' + config.site + ' Base Coding';
-	const h1Title = config.site + ' <small class=\"muted-color\">' + config.company + '</small>';
-	const outlineTxt = config.site + ' - ' + config.project + ' base coding.';
-	const disclaimer = 'Disclaimer';
-	const disclaimerTxt = 'Disclaimer Text.';
-	const copyright = '&copy; Copyright.Inc';
+	var pageTitle = 'pageTitle';
+	var h1Title = 'h1Title';
+	var outlineTxt = 'Outline text sample.';
+	var disclaimer = 'Disclaimer title sample.';
+	var disclaimerTxt = 'Disclaimer text sample.';
+	var copyright = '&copy; CopyrightSample.Inc';
 
-	fs.readdir(htmldir, function (err, data) {
+	fs.readdir(htmlPath, function (err, data) {
 		if (err) throw err;
 		var containerHtmlFiles = [];
 		for (var i in data) {
-			var regexp = new RegExp('^(?!index\.html).*\.html');
-			if (data[i].match(regexp) && !data[i].match(/index\.html/g)) {
-				var src = fs.readFileSync(htmldir + data[i], 'utf-8');
+			if (!data[i].match(fileName)) {
+				var src = fs.readFileSync(htmlPath + data[i], 'utf-8');
 				var title = src.match(/<title>.*<\/title>/g);
-				title = title[0].replace(/<title>/g, '').replace(/<\/title>/g, '');
+				title = title[0].replace(/<title>/g, '').replace(removeTitle, '').replace(/<\/title>/g, '');
 				containerHtmlFiles.push({
 					file: data[i],
 					title: title
@@ -82,19 +92,13 @@ async function makeIndex() {
 			}
 		}
 
-		if (containerHtmlFiles.length > 1) {
-			var containerHtmlFilesCount = containerHtmlFiles.length - 1;
-			var lcsText = lcs(containerHtmlFiles[0].title, containerHtmlFiles[containerHtmlFilesCount].title).sequence;
-			for (i in containerHtmlFiles) {
-				containerHtmlFiles[i].title = containerHtmlFiles[i].title.replace(lcsText, '');
-			}
-		}
-
+		// 共通レイアウト
 		var htmlContents = [
 			'<!DOCTYPE html><html lang=\"ja\">',
 			'<head>',
 				'<meta charset=\"utf-8\">',
 				'<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">',
+				'<link rel=\"icon\" href=\"' + faviconPath + '\">',
 				'<title>' + pageTitle + '</title>',
 				'<link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\">',
 				'<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">',
@@ -115,27 +119,23 @@ async function makeIndex() {
 							'<h1>' + h1Title + '</h1>',
 							'<p>' + outlineTxt + '</p>',
 		].join('');
-		if (config.construction == 'adaptive') {
+		if (construction == 'adaptive') {
 			htmlContents += [
-				'<h5 class=\"pr-2 pl-2 d-inline-flex align-items-center badge ' + colorMode.badgeClass + '\"><span class=\"mr-1\">Adaptive</span>'
+				'<h5 class=\"pr-2 pl-2 d-inline-flex align-items-center badge ' + colorMode.badgeClass + '\"><span class=\"mr-1\">Adaptive</span><i class=\"material-icons lead\">' + deviceIcons[1] + '</i><i class=\"material-icons lead\">' + deviceIcons[2] + '</i><i class=\"material-icons lead\">' + deviceIcons[3] + '</i></h5>'
 			].join('');
-			if (config.device.desktop === true) { htmlContents += '<i class=\"material-icons lead\">' + deviceIcons[1] + '</i>'; }
-			if (config.device.mobile === true) { htmlContents += '<i class=\"material-icons lead\">' + deviceIcons[2] + '</i>'; }
-			if (config.device.tablet === true) { htmlContents += '<i class=\"material-icons lead\">' + deviceIcons[3] + '</i>'; }
-			htmlContents += '</h5>';
 		}
-		if (config.construction == 'responsive') {
+		if (construction == 'responsive') {
 			htmlContents += [
 				'<h5 class=\"pr-2 pl-2 d-inline-flex align-items-center badge ' + colorMode.badgeClass + '\"><span class=\"mr-1\">Responsive</span><i class=\"material-icons lead\">' + deviceIcons[0] + '</i></h5>'
 			].join('');
 		}
-		htmlContents += ['</div></div><div class=\"row mb-5\"><div class=\"col-sm-12\"><div class=\"d-flex align-items-center mb-3\"><i class=\"material-icons mr-1\">' + DevTitleIcon + '</i><h2 class=\"mb-0\">' + DevTitle + '</h2></div>'].join('');
+		htmlContents += '</div></div>';
+		// 共通レイアウト↑ここまで
 
 		// ====================================================================================
 		// Adaptive 専用 ファイル処理
 		// ====================================================================================
-		
-		// Global変数
+
 		var fileEquip;// ソート後に各ファイルに格納される配列用
 		var iconFileCount = 0;// 先頭につくアイコン配列回し用
 
@@ -240,18 +240,22 @@ async function makeIndex() {
 		var col8Class = 'col-8 d-md-flex justify-content-between align-items-center p-3 overflow-hidden text-decoration-none ';
 		var col2Class = 'col-2 border-left d-flex justify-content-center justify-content-md-start align-items-center p-3 overflow-hidden text-decoration-none ';
 		//
-		function fileOutput() {
+		function fileOutput(value) {
 			// 再利用できるHTML
 			var blankMobile = '<div class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none\"><i class=\"material-icons mr-md-3 muted-color\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline muted-color">Mobile</p></div>';
 			var blankTablet = '<div class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none\"><i class=\"material-icons mr-md-3 muted-color\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline muted-color">Tablet</p></div>';
 			var blankDesktop = '<div class=\"' + col8Class + colorMode.buttonClass + 'pointer-events-none\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0\">';
-			if (IconsAdaptive[iconFileCount] !== undefined) { blankDesktop += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + IconsAdaptive[iconFileCount] + '</i>'; }
+			if (value.fileIcon) {
+				if (value.fileIcon[iconFileCount] !== undefined) { blankDesktop += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+			}
 			blankDesktop += '<p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline muted-color">Desktop</p></div></div></div>';
 
 			if (fileEquip.type === 'all') {// All だれも空を出力しない
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
-					if (IconsAdaptive[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + IconsAdaptive[iconFileCount] + '</i>'; }
+					if (value.fileIcon) {
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+					}
 					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>';
 				} else if (fileEquip.device === 'mobile') {
 					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>';
@@ -261,7 +265,9 @@ async function makeIndex() {
 			} else if (fileEquip.type === 'dm') {// Desktop & Mobile モバイルがタブレットの空を出力する
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
-					if (IconsAdaptive[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + IconsAdaptive[iconFileCount] + '</i>'; }
+					if (value.fileIcon) {
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+					}
 					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>';
 				} else if (fileEquip.device === 'mobile') {
 					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>' + blankTablet + '</div>';
@@ -269,7 +275,9 @@ async function makeIndex() {
 			} else if (fileEquip.type === 'dt') {// Desktop & Tablet デスクトップがモバイルの空を出力する
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
-					if (IconsAdaptive[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + IconsAdaptive[iconFileCount] + '</i>'; }
+					if (value.fileIcon) {
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+					}
 					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>' + blankMobile;
 				} else if (fileEquip.device === 'tablet') {
 					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
@@ -283,7 +291,9 @@ async function makeIndex() {
 			} else if (fileEquip.type === 'only') {// ONLY それぞれが２つ空を出力する
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
-					if (IconsAdaptive[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + IconsAdaptive[iconFileCount] + '</i>'; }
+					if (value.fileIcon) {
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+					}
 					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>' + blankMobile + blankTablet + '</div>';
 				} else if (fileEquip.device === 'mobile') {
 					htmlContents += listGroupItem + blankDesktop + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>' + blankTablet + '</div>';
@@ -292,86 +302,75 @@ async function makeIndex() {
 				}
 			}
 		}
-
 		// ====================================================================================
 		// Adaptive
 		// ====================================================================================
-		if (config.construction == 'adaptive') {
-
-			htmlContents += '<div class=\"list-group\">';
-
-			for (i in containerHtmlFiles) {
-				if (!containerHtmlFiles[i].file.indexOf(prefixDev)) {// prefix is dev
-					fileSort();
-					fileOutput();
+		if (construction == 'adaptive') {
+			prefix.forEach( function(value) {
+				htmlContents += '<div class=\"row mb-5\"><div class=\"col-sm-12\">';
+				if(value.title !== undefined) {// title
+					htmlContents += '<div class=\"d-flex align-items-center mb-3\">';
+					if(value.titleIcon !== undefined) {// titleIcon
+						htmlContents += ['<i class=\"material-icons mr-1\">' + value.titleIcon + '</i>'].join('');
+					}
+					htmlContents += ['<h2 class=\"mb-0\">' + value.title + '</h2></div>'].join('');
 				}
-				iconFileCount++;
-			}
-			htmlContents += ['</div></div></div><div class=\"row mb-5\"><div class=\"col-sm-12\"><div class=\"d-flex align-items-center mb-3\"><i class=\"material-icons mr-1\">' + PageTitleIcon + '</i><h2 class=\"mb-0\">' + PageTitle + '</h2></div><div class=\"list-group\">'].join('');
-			for (i in containerHtmlFiles) {
-				if (!containerHtmlFiles[i].file.indexOf(prefixPage)) {// prefix is page
-					fileSort();
-					fileOutput();
+				htmlContents += '<div class=\"list-group\">';
+				for (i in containerHtmlFiles) {
+					if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
+						fileSort(value);
+						fileOutput(value);
+					}
+					iconFileCount++;
 				}
-			}
-			htmlContents += ['</div></div></div><div class=\"row mb-5\"><div class=\"col-sm-12\"><div class=\"d-flex align-items-center mb-3\"><i class=\"material-icons mr-1\">' + WorkTitleIcon + '</i><h2 class=\"mb-0\">' + WorkTitle + '</h2></div><div class=\"list-group\">'].join('');
-			for (i in containerHtmlFiles) {
-				if (!containerHtmlFiles[i].file.indexOf(prefixWork)) {// prefix is work
-					fileSort();
-					fileOutput();
-				}
-			}
+				htmlContents += '</div></div></div>';
+			});
 		}
-
 		// ====================================================================================
 		// Responsive
 		// ====================================================================================
-		if (config.construction == 'responsive') {
-			htmlContents += '<div class=\"row mb-5\">';
-			var iconFileCount = 0;
-			for (var i in containerHtmlFiles) {
-				if (!containerHtmlFiles[i].file.indexOf(prefixDev)) {
-					htmlContents += '<div class=\"col-md-3 mt-2 mb-2\"><a href=\"' + containerHtmlFiles[i].file + '\" class=\"h-100 btn btn-block list-group-item text-center pt-4 pb-4 pl-2 pr-2 ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '\"><div class=\"mb-1\">\n';
-					if (IconsResponsive[iconFileCount] !== undefined) {
-						htmlContents += '<i class=\"material-icons display-4\">' + IconsResponsive[iconFileCount] + '</i>';
+		if (construction == 'responsive') {
+			prefix.forEach( function(value) {
+				htmlContents += '<div class=\"row mb-5\"><div class=\"col-sm-12\">';
+				if(value.title !== undefined) {// title
+					htmlContents += '<div class=\"d-flex align-items-center mb-3\">';
+					if(value.titleIcon !== undefined) {// titleIcon
+						htmlContents += ['<i class=\"material-icons mr-1\">' + value.titleIcon + '</i>'].join('');
 					}
-					htmlContents += '</div><h2 class=\"mb-0\">' + containerHtmlFiles[i].title + '</h2><div><small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a></div>\n';
-					iconFileCount++;
+					htmlContents += ['<h2 class=\"mb-0\">' + value.title + '</h2></div>'].join('');
 				}
-			}
-			htmlContents += [
-				'</div>',
-				'<div class=\"row mb-5\">',
-					'<div class=\"col-sm-12\">',
-						'<div class=\"d-flex align-items-center mb-3\"><i class=\"material-icons mr-1\">description</i><h2 class=\"mb-0\">Pages</h2></div>',
-						'<div class=\"list-group\">\n'
-			].join('');
-			for (var i in containerHtmlFiles) {
-				if (!containerHtmlFiles[i].file.indexOf(prefixPage)) {
-					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"list-group-item list-group-item-action d-md-flex justify-content-between align-items-center ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '\">' + containerHtmlFiles[i].title + '<div> <small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a>\n';
+				if(value.fileIcon !== undefined) {// iconあり
+					htmlContents += '<div class=\"row mb-5\">';
+					var iconFileCount = 0;
+					for (i in containerHtmlFiles) {
+						if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
+							htmlContents += '<div class=\"col-md-3 mt-2 mb-2\"><a href=\"' + containerHtmlFiles[i].file + '\" class=\"h-100 btn btn-block list-group-item text-center pt-4 pb-4 pl-2 pr-2 ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '\"><div class=\"mb-1\">';
+							if (value.fileIcon[iconFileCount] !== undefined) {
+								htmlContents += '<i class=\"material-icons display-4\">' + value.fileIcon[iconFileCount] + '</i>';
+							}
+							htmlContents += '</div><h2 class=\"mb-0\">' + containerHtmlFiles[i].title + '</h2><div><small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a></div>';
+							iconFileCount++;
+						}
+					}
+					htmlContents += '</div>';
+				} else {// iconなし
+					htmlContents += [
+						'<div class=\"list-group\">'
+					].join('');
+					for (i in containerHtmlFiles) {
+						if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
+							htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"list-group-item list-group-item-action d-md-flex justify-content-between align-items-center ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '\">' + containerHtmlFiles[i].title + '<div> <small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a>';
+						}
+					}
+					htmlContents += '</div>';
 				}
-			}
-			htmlContents += [
-				'</div></div></div>',
-				'<div class=\"row mb-5\">',
-					'<div class=\"col-sm-12\">',
-					'<div class=\"d-flex align-items-center mb-3\"><i class=\"material-icons mr-1\">create</i><h2 class=\"mb-0\">Workspace</h2></div>',
-						'<div class=\"list-group\">\n'
-			].join('');
-			for (var i in containerHtmlFiles) {
-				if (!containerHtmlFiles[i].file.indexOf(prefixWork)) {
-					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"list-group-item list-group-item-action d-md-flex justify-content-between align-items-center ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '\">' + containerHtmlFiles[i].title + '<div> <small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a>\n';
-				}
-			}
+				htmlContents += '</div></div>';
+			});
 		}
-
-		// これより下はResponsiveとAdaptive共通
-		htmlContents += '</div></div></div><div class=\"row\"><div class=\"col-sm-12\"><dl><dt>' + disclaimer + '</dt><dd>' + disclaimerTxt + '</dd></dl><hr class=\"' + colorMode.borderColor + '\"><p class=\"muted-color text-center\"><small>' + copyright + '</small></p></div></div></div></body></html>';
-
-		fs.writeFile(outputdir + outputname, htmlContents, function (err) {
+		htmlContents += '<div class=\"row\"><div class=\"col-sm-12\"><dl><dt>' + disclaimer + '</dt><dd>' + disclaimerTxt + '</dd></dl><hr class=\"' + colorMode.borderColor + '\"><p class=\"muted-color text-center\"><small>' + copyright + '</small></p></div></div></div></body></html>';
+		fs.writeFile(distPath + fileName, htmlContents, function (err) {
 			if (err) throw err;
 		});
 	});
 }
-
 exports.makeIndex = makeIndex;
