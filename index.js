@@ -2,13 +2,12 @@
 
 const fs = require('fs');
 
-async function makeIndex() {
+function makeindex (config) {
 
 	// user settings
-
-	var htmlPath = './html/';
-	var distPath = htmlPath;
-	var fileName = 'index.html';
+	var htmlPath = config.htmlPath || './html/';
+	var distPath = config.distPath || htmlPath;
+	var fileName = config.fileName || 'index.html';
 
 	const colorModeSet = {
 		light: {// Light Color
@@ -30,52 +29,47 @@ async function makeIndex() {
 			listGroupItemHover : ''
 		}
 	}
-	var colorMode = colorModeSet.dark;// Color Mode choice
+	var darkMode = config.darkMode || false;
+	var colorMode;
+	if(!darkMode) {
+		colorMode = colorModeSet.light;
+	} else {
+		colorMode = colorModeSet.dark;
+	}
 
 	// Google Material Icons
-	var deviceIcons = ["devices","desktop_mac","phone_iphone","tablet_mac"];// デバイスのアイコン
+	var deviceIcons = ["devices","desktop_mac","phone_iphone","tablet_mac"];
 
-	// config
-	const construction = 'adaptive';
+	// Construction
+	var construction = config.construction || 'responsive';
 
-	// Prefixの指定
-	var prefix = [
+	// Prefix
+	var prefix = config.prefixGroup || [
 		{
-			prefixName: 'd',
-			title: 'Develop',
-			titleIcon: 'keyboard',
-			fileIcon: ["style","","","view_compact","","mood","code"]
-		},
-		{
-			prefixName: 'p',
-			title: 'Pages',
-			titleIcon: 'description'
-		},
-		{
-			prefixName: 'w',
-			title: 'WorkSpace',
-			titleIcon: 'create'
+			prefixName: '',
+			title: '',
+			titleIcon: ''
 		}
 	]
 
-	// Suffixの設定（Adaptiveのみ機能）
-	var suffixDesktop = '-desktop.html';
-	var suffixMobile = '-mobile.html';
-	var suffixTablet = '-tablet.html';
+	// Suffix(adaptive only)
+	var suffixDesktop = config.suffixDesktop || '-desktop.html';
+	var suffixMobile = config.suffixMobile || '-mobile.html';
+	var suffixTablet = config.suffixTablet || '-tablet.html';
 
-	// 共通削除文
-	var removeTitle = ' | TEST FILE';
+	// Remove
+	var removeTitle = config.removeTitle || '';
 
 	// favicon
-	var faviconPath = '';
+	var faviconPath = config.faviconPath || '';
 
-	// 文言設定
-	var pageTitle = 'pageTitle';
-	var h1Title = 'h1Title';
-	var outlineTxt = 'Outline text sample.';
-	var disclaimer = 'Disclaimer title sample.';
-	var disclaimerTxt = 'Disclaimer text sample.';
-	var copyright = '&copy; CopyrightSample.Inc';
+	// Text
+	var headTitle = config.headTitle || 'index';
+	var pageTitle = config.pageTitle || 'pageTitle';
+	var overview = config.overview || 'Overview text sample.';
+	var disclaimerTitle = config.disclaimerTitle || 'Disclaimer title sample';
+	var disclaimerDesc = config.disclaimerDesc || 'Disclaimer description sample.';
+	var copyright = config.copyright || '&copy; CopyrightSample.Inc';
 
 	fs.readdir(htmlPath, function (err, data) {
 		if (err) throw err;
@@ -91,15 +85,15 @@ async function makeIndex() {
 				});
 			}
 		}
-
-		// 共通レイアウト
+	
+		// commonHTML
 		var htmlContents = [
 			'<!DOCTYPE html><html lang=\"ja\">',
 			'<head>',
 				'<meta charset=\"utf-8\">',
 				'<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">',
 				'<link rel=\"icon\" href=\"' + faviconPath + '\">',
-				'<title>' + pageTitle + '</title>',
+				'<title>' + headTitle + '</title>',
 				'<link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\">',
 				'<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">',
 				'<link href=\"https://fonts.googleapis.com/css?family=Noto+Sans+JP|Roboto&display=swap\" rel=\"stylesheet\">',
@@ -116,8 +110,8 @@ async function makeIndex() {
 				'<div class=\"container pt-5 pb-2\">',
 					'<div class=\"row mb-5\">',
 						'<div class=\"col-sm-12\">',
-							'<h1>' + h1Title + '</h1>',
-							'<p>' + outlineTxt + '</p>',
+							'<h1>' + pageTitle + '</h1>',
+							'<p>' + overview + '</p>',
 		].join('');
 		if (construction == 'adaptive') {
 			htmlContents += [
@@ -130,19 +124,14 @@ async function makeIndex() {
 			].join('');
 		}
 		htmlContents += '</div></div>';
-		// 共通レイアウト↑ここまで
-
+	
 		// ====================================================================================
-		// Adaptive 専用 ファイル処理
+		// Adaptive file sort
 		// ====================================================================================
-
+	
 		var fileEquip;// ソート後に各ファイルに格納される配列用
 		var iconFileCount = 0;// 先頭につくアイコン配列回し用
-
-		// suffix外しの処理をここにまとめたい
-		// function deleteSuffix() {
-		// }
-
+	
 		// 自分の立ち位置を判定する
 		function fileSort() {
 			var fileNext = parseInt(i) + 1;// 次のファイルの配列番号を取得
@@ -150,7 +139,7 @@ async function makeIndex() {
 			var filePrev = parseInt(i) - 1;// 前のファイルの配列番号を取得
 			var fileCurrentId = containerHtmlFiles[i].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// 現在のファイル名を取得（suffixを外した状態）
 			var filePrevId;
-
+	
 			if (containerHtmlFiles[fileNext] !== undefined){// 現在のファイルの次にファイルが存在する場合
 				var fileNextId = containerHtmlFiles[fileNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// 次のファイル名を取得（suffixを外した状態）
 				if (fileCurrentId === fileNextId) {// 現在のファイル名が次のファイルと同じ
@@ -180,8 +169,8 @@ async function makeIndex() {
 			}
 			// 自分がどのデバイスか判定する。デバイス兄弟がいるものが辿り着く場所。確定で２つ以上同じファイルがある
 			function fileTypeCheck() {
-				if ((containerHtmlFiles[i].file.lastIndexOf(suffixDesktop)+suffixDesktop.length===containerHtmlFiles[i].file.length)&&(suffixDesktop.length<=containerHtmlFiles[i].file.length)) {// 自分がDesktopかチェック
-					// Desktop確定ゾーン===================================================================================================================
+				if ((containerHtmlFiles[i].file.lastIndexOf(suffixDesktop)+suffixDesktop.length===containerHtmlFiles[i].file.length)&&(suffixDesktop.length<=containerHtmlFiles[i].file.length)) {// check if it is desktop
+					// Confirm Desktop===========
 					if (containerHtmlFiles[fileNextNext] !== undefined){// 次の次のファイルが存在する場合
 						var fileNextNextId = containerHtmlFiles[fileNextNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
 						if (fileCurrentId === fileNextNextId) {// 現在のファイル名が次の次と同じ、[Desktop & Mobile & Tablet]
@@ -200,7 +189,7 @@ async function makeIndex() {
 							fileEquip = { type:'dt', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
 						}
 					}
-				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// 自分がMobileかチェック
+				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// check if it is mobile
 					// Mobile確定ゾーン===================================================================================================================
 					if (containerHtmlFiles[filePrev] !== undefined){// 前のファイルが存在する場合
 						var filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
@@ -220,28 +209,28 @@ async function makeIndex() {
 							fileEquip = { type:'mt', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
 						}
 					}
-				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixTablet)+suffixTablet.length===containerHtmlFiles[i].file.length)&&(suffixTablet.length<=containerHtmlFiles[i].file.length)) {// 自分がTabletかチェック
+				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixTablet)+suffixTablet.length===containerHtmlFiles[i].file.length)&&(suffixTablet.length<=containerHtmlFiles[i].file.length)) {// check if it is tablet
 					fileEquip = { type:'all', device:'tablet', icon:deviceIcons[3], file:fileCurrentId };//TabletのTypeはOnly以外ならいい
 				}
 			}
-			// 自分がどのデバイスか判定する。デバイス兄弟がいない者が辿り着く場所。
+			// determine which device [no device sibling]
 			function fileTypeCheckSingle() {
-				if ((containerHtmlFiles[i].file.lastIndexOf(suffixDesktop)+suffixDesktop.length===containerHtmlFiles[i].file.length)&&(suffixDesktop.length<=containerHtmlFiles[i].file.length)) {// 自分がDesktopかチェック[Desktop Only]
+				if ((containerHtmlFiles[i].file.lastIndexOf(suffixDesktop)+suffixDesktop.length===containerHtmlFiles[i].file.length)&&(suffixDesktop.length<=containerHtmlFiles[i].file.length)) {// check if it is desktop [Desktop Only]
 					fileEquip = { type:'only', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
-				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// 自分がMobileかチェック[Mobile Only]
+				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// check if it is mobile [Mobile Only]
 					fileEquip = { type:'only', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
-				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixTablet)+suffixTablet.length===containerHtmlFiles[i].file.length)&&(suffixTablet.length<=containerHtmlFiles[i].file.length)) {// 自分がTabletかチェック[Tablet Only]
+				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixTablet)+suffixTablet.length===containerHtmlFiles[i].file.length)&&(suffixTablet.length<=containerHtmlFiles[i].file.length)) {// check if it is tablet [Tablet Only]
 					fileEquip = { type:'only', device:'tablet', icon:deviceIcons[3], file:fileCurrentId };
 				}
 			}
 		}
-		// 再利用できるHTML
+		// reusable html
 		var listGroupItem = '<div class=\"d-flex justify-content-between list-group-item overflow-hidden p-0 ' + colorMode.borderColor + '\">';
 		var col8Class = 'col-8 d-md-flex justify-content-between align-items-center p-3 overflow-hidden text-decoration-none ';
 		var col2Class = 'col-2 border-left d-flex justify-content-center justify-content-md-start align-items-center p-3 overflow-hidden text-decoration-none ';
 		//
 		function fileOutput(value) {
-			// 再利用できるHTML
+			// reusable html
 			var blankMobile = '<div class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none\"><i class=\"material-icons mr-md-3 muted-color\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline muted-color">Mobile</p></div>';
 			var blankTablet = '<div class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none\"><i class=\"material-icons mr-md-3 muted-color\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline muted-color">Tablet</p></div>';
 			var blankDesktop = '<div class=\"' + col8Class + colorMode.buttonClass + 'pointer-events-none\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0\">';
@@ -249,8 +238,8 @@ async function makeIndex() {
 				if (value.fileIcon[iconFileCount] !== undefined) { blankDesktop += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
 			}
 			blankDesktop += '<p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline muted-color">Desktop</p></div></div></div>';
-
-			if (fileEquip.type === 'all') {// All だれも空を出力しない
+	
+			if (fileEquip.type === 'all') {// [All] do not output empty files
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
 					if (value.fileIcon) {
@@ -262,7 +251,7 @@ async function makeIndex() {
 				} else if (fileEquip.device === 'tablet') {
 					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
 				}
-			} else if (fileEquip.type === 'dm') {// Desktop & Mobile モバイルがタブレットの空を出力する
+			} else if (fileEquip.type === 'dm') {// [Desktop & Mobile] mobile outputs an empty file on the tablet
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
 					if (value.fileIcon) {
@@ -272,7 +261,7 @@ async function makeIndex() {
 				} else if (fileEquip.device === 'mobile') {
 					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>' + blankTablet + '</div>';
 				}
-			} else if (fileEquip.type === 'dt') {// Desktop & Tablet デスクトップがモバイルの空を出力する
+			} else if (fileEquip.type === 'dt') {// [Desktop & Tablet] desktop outputs an empty file on the mobile
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
 					if (value.fileIcon) {
@@ -282,13 +271,13 @@ async function makeIndex() {
 				} else if (fileEquip.device === 'tablet') {
 					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
 				}
-			} else if (fileEquip.type === 'mt') {// Mobile & Tablet モバイルがデスクトップの空を出力する
+			} else if (fileEquip.type === 'mt') {// [Mobile & Tablet] mobile outputs an empty file on the desktop
 				if (fileEquip.device === 'mobile') {
 					htmlContents += listGroupItem + blankDesktop + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>';
 				} else if (fileEquip.device === 'tablet') {
 					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
 				}
-			} else if (fileEquip.type === 'only') {// ONLY それぞれが２つ空を出力する
+			} else if (fileEquip.type === 'only') {// [ONLY] output two empty files
 				if (fileEquip.device === 'desktop') {
 					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
 					if (value.fileIcon) {
@@ -308,9 +297,9 @@ async function makeIndex() {
 		if (construction == 'adaptive') {
 			prefix.forEach( function(value) {
 				htmlContents += '<div class=\"row mb-5\"><div class=\"col-sm-12\">';
-				if(value.title !== undefined) {// title
+				if(value.title !== undefined) {// title available
 					htmlContents += '<div class=\"d-flex align-items-center mb-3\">';
-					if(value.titleIcon !== undefined) {// titleIcon
+					if(value.titleIcon !== undefined) {// titleIcon available
 						htmlContents += ['<i class=\"material-icons mr-1\">' + value.titleIcon + '</i>'].join('');
 					}
 					htmlContents += ['<h2 class=\"mb-0\">' + value.title + '</h2></div>'].join('');
@@ -332,14 +321,14 @@ async function makeIndex() {
 		if (construction == 'responsive') {
 			prefix.forEach( function(value) {
 				htmlContents += '<div class=\"row mb-5\"><div class=\"col-sm-12\">';
-				if(value.title !== undefined) {// title
+				if(value.title !== undefined) {// title available
 					htmlContents += '<div class=\"d-flex align-items-center mb-3\">';
-					if(value.titleIcon !== undefined) {// titleIcon
+					if(value.titleIcon !== undefined) {// titleIcon available
 						htmlContents += ['<i class=\"material-icons mr-1\">' + value.titleIcon + '</i>'].join('');
 					}
 					htmlContents += ['<h2 class=\"mb-0\">' + value.title + '</h2></div>'].join('');
 				}
-				if(value.fileIcon !== undefined) {// iconあり
+				if(value.fileIcon !== undefined) {// icon available
 					htmlContents += '<div class=\"row mb-5\">';
 					var iconFileCount = 0;
 					for (i in containerHtmlFiles) {
@@ -353,7 +342,7 @@ async function makeIndex() {
 						}
 					}
 					htmlContents += '</div>';
-				} else {// iconなし
+				} else {// icon not available
 					htmlContents += [
 						'<div class=\"list-group\">'
 					].join('');
@@ -367,10 +356,13 @@ async function makeIndex() {
 				htmlContents += '</div></div>';
 			});
 		}
-		htmlContents += '<div class=\"row\"><div class=\"col-sm-12\"><dl><dt>' + disclaimer + '</dt><dd>' + disclaimerTxt + '</dd></dl><hr class=\"' + colorMode.borderColor + '\"><p class=\"muted-color text-center\"><small>' + copyright + '</small></p></div></div></div></body></html>';
+		// commonHTML
+		htmlContents += '<div class=\"row\"><div class=\"col-sm-12\"><dl><dt>' + disclaimerTitle + '</dt><dd>' + disclaimerDesc + '</dd></dl><hr class=\"' + colorMode.borderColor + '\"><p class=\"muted-color text-center\"><small>' + copyright + '</small></p></div></div></div></body></html>';
 		fs.writeFile(distPath + fileName, htmlContents, function (err) {
 			if (err) throw err;
 		});
 	});
-}
-exports.makeIndex = makeIndex;
+	
+};
+
+module.exports = makeindex;
