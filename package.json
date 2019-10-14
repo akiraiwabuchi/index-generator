@@ -1,14 +1,15 @@
 {
   "name": "makeindex",
-  "version": "0.1.2",
-  "description": "make index for page list.",
+  "version": "1.0.0",
+  "description": "Create a table of contents file that summarizes the links to the target file.",
   "author": "akiraiwabuchi",
   "license": "MIT",
   "main": "index.js",
   "bugs": "https://github.com/akiraiwabuchi/makeindex/issues",
   "keywords": [
     "makeindex",
-    "index"
+    "index",
+    "make"
   ],
   "repository": {
     "type": "git",

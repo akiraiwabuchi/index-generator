@@ -37,10 +37,7 @@ function makeindex (config) {
 		colorMode = colorModeSet.dark;
 	}
 
-	// Google Material Icons
 	var deviceIcons = ["devices","desktop_mac","phone_iphone","tablet_mac"];
-
-	// Construction
 	var construction = config.construction || 'responsive';
 
 	// Prefix
@@ -57,13 +54,8 @@ function makeindex (config) {
 	var suffixMobile = config.suffixMobile || '-mobile.html';
 	var suffixTablet = config.suffixTablet || '-tablet.html';
 
-	// Remove
 	var removeTitle = config.removeTitle || '';
-
-	// favicon
 	var faviconPath = config.faviconPath || '';
-
-	// Text
 	var headTitle = config.headTitle || 'index';
 	var pageTitle = config.pageTitle || 'pageTitle';
 	var overview = config.overview || 'Overview text sample.';
@@ -129,88 +121,87 @@ function makeindex (config) {
 		// Adaptive file sort
 		// ====================================================================================
 	
-		var fileEquip;// ソート後に各ファイルに格納される配列用
-		var iconFileCount = 0;// 先頭につくアイコン配列回し用
-	
-		// 自分の立ち位置を判定する
+		var fileEquip;
+		var iconFileCount = 0;
+
 		function fileSort() {
-			var fileNext = parseInt(i) + 1;// 次のファイルの配列番号を取得
-			var fileNextNext = parseInt(i) + 2;// 次の次のファイルの配列番号を取得
-			var filePrev = parseInt(i) - 1;// 前のファイルの配列番号を取得
-			var fileCurrentId = containerHtmlFiles[i].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// 現在のファイル名を取得（suffixを外した状態）
+			var fileNext = parseInt(i) + 1;
+			var fileNextNext = parseInt(i) + 2;
+			var filePrev = parseInt(i) - 1;
+			var fileCurrentId = containerHtmlFiles[i].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// Get current file name（State without suffix）
 			var filePrevId;
 	
-			if (containerHtmlFiles[fileNext] !== undefined){// 現在のファイルの次にファイルが存在する場合
-				var fileNextId = containerHtmlFiles[fileNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// 次のファイル名を取得（suffixを外した状態）
-				if (fileCurrentId === fileNextId) {// 現在のファイル名が次のファイルと同じ
+			if (containerHtmlFiles[fileNext] !== undefined){// If the file exists after the current file
+				var fileNextId = containerHtmlFiles[fileNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// Get next file name（State without suffix）
+				if (fileCurrentId === fileNextId) {// The current file name is the same as the following file
 					fileTypeCheck();
-				} else {// 現在のファイル名が次のファイルと不一致
-					if (containerHtmlFiles[filePrev] !== undefined){// 現在のファイルの前にファイルが存在する場合
-						filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// 前のファイル名を取得（suffixを外した状態）
-						if (fileCurrentId === filePrevId) {// 現在のファイル名が前のファイルと同じ
+				} else {// The current file name does not match the next file
+					if (containerHtmlFiles[filePrev] !== undefined){// If the file exists before the current file
+						filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// Get previous file name（State without suffix）
+						if (fileCurrentId === filePrevId) {// The current file name is the same as the previous file
 							fileTypeCheck();
-						} else {// デバイス兄弟がいないファイル
+						} else {// Files without device siblings
 							fileTypeCheckSingle();
 						}
-					} else {// index.htmlを除く一番最初のファイルかつ、デバイス兄弟がいない
+					} else {// First file except index.html, no device sibling
 						fileTypeCheckSingle();
 					}
 				}
-			} else {// 現在のファイルの次にファイルが存在しない
-				if (containerHtmlFiles[filePrev] !== undefined){// 前のファイルが存在する場合
-					filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// 前のファイル名を取得（suffixを外した状態）
-					if (fileCurrentId === filePrevId) {// 現在のファイル名が前のファイルと同じ
+			} else {// The file does not exist after the current file
+				if (containerHtmlFiles[filePrev] !== undefined){// If the previous file exists
+					filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// Get previous file name（State without suffix）
+					if (fileCurrentId === filePrevId) {// The current file name is the same as the previous file
 						fileTypeCheck();
-					} else {// index.htmlを除く一番最後のファイルかつ、デバイス兄弟がいない
+					} else {// Last file except index.html and no device sibling
 						fileTypeCheckSingle();
 					}
-				} else {// index.htmlとふたりきり、そもそもエラーで4つ以上ないと生成されないので処理はない
+				} else {// index.html and only you
 				}
 			}
-			// 自分がどのデバイスか判定する。デバイス兄弟がいるものが辿り着く場所。確定で２つ以上同じファイルがある
+			// Determine which device this file is.( Where the device brothers arrive. 2 or more identical files confirmed )
 			function fileTypeCheck() {
 				if ((containerHtmlFiles[i].file.lastIndexOf(suffixDesktop)+suffixDesktop.length===containerHtmlFiles[i].file.length)&&(suffixDesktop.length<=containerHtmlFiles[i].file.length)) {// check if it is desktop
 					// Confirm Desktop===========
-					if (containerHtmlFiles[fileNextNext] !== undefined){// 次の次のファイルが存在する場合
+					if (containerHtmlFiles[fileNextNext] !== undefined){// If the next of the following files exists
 						var fileNextNextId = containerHtmlFiles[fileNextNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
-						if (fileCurrentId === fileNextNextId) {// 現在のファイル名が次の次と同じ、[Desktop & Mobile & Tablet]
+						if (fileCurrentId === fileNextNextId) {// The current file name is the next next file name [Desktop & Mobile & Tablet]
 							fileEquip = { type:'all', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
-						} else {// 次の次のファイルは違うファイル、[Desktop & Mobile or Tablet]
-							if ((containerHtmlFiles[fileNext].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[fileNext].file.length)&&(suffixMobile.length<=containerHtmlFiles[fileNext].file.length)) {// 次のファイルがモバイルかを判別する
+						} else {// The next next file is another file [Desktop & Mobile or Tablet]
+							if ((containerHtmlFiles[fileNext].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[fileNext].file.length)&&(suffixMobile.length<=containerHtmlFiles[fileNext].file.length)) {// Determine if next file is mobile
 								fileEquip = { type:'dm', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
-							} else {// dt確定
+							} else {// dt
 								fileEquip = { type:'dt', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
 							}
 						}
-					} else {// 次の次のファイルはない、[Desktop & Mobile or Tablet]
-						if ((containerHtmlFiles[fileNext].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[fileNext].file.length)&&(suffixMobile.length<=containerHtmlFiles[fileNext].file.length)) {// 次のファイルがモバイルかを判別する
+					} else {// The following next file does not exist [Desktop & Mobile or Tablet]
+						if ((containerHtmlFiles[fileNext].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[fileNext].file.length)&&(suffixMobile.length<=containerHtmlFiles[fileNext].file.length)) {// Determine if next file is mobile
 							fileEquip = { type:'dm', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
-						} else {// dt確定
+						} else {// dt
 							fileEquip = { type:'dt', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
 						}
 					}
 				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// check if it is mobile
-					// Mobile確定ゾーン===================================================================================================================
-					if (containerHtmlFiles[filePrev] !== undefined){// 前のファイルが存在する場合
+					// Mobile verification zone ==========================================================================
+					if (containerHtmlFiles[filePrev] !== undefined){// If the previous file exists
 						var filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
-						if (fileCurrentId === filePrevId) {// 現在のファイル名が前と同じ、[Desktop & Mobile]
+						if (fileCurrentId === filePrevId) {// The current file name is the same as the previous file [Desktop & Mobile]
 							if (fileCurrentId === fileNextId) {// [Desktop & Mobile & Tablet]
 								fileEquip = { type:'all', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
 							} else {// [Desktop & Mobile]
 								fileEquip = { type:'dm', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
 							}
-						} else {// 現在のファイル名が前と不一致
-							if (fileCurrentId === fileNextId) {// 現在のファイル名が次と同じ、[Mobile & Tablet]
+						} else {// Current file name does not match previous file
+							if (fileCurrentId === fileNextId) {// The current file name is the same as [Mobile & Tablet]
 								fileEquip = { type:'mt', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
 							}
 						}
-					} else {// 前のファイルはなく、次にファイルが存在する場合
-						if (fileCurrentId === fileNextId) {// 現在のファイル名が次と同じ、[Mobile & Tablet]
+					} else {// If there is no previous file and the next file exists
+						if (fileCurrentId === fileNextId) {// The current file name is the same as [Mobile & Tablet]
 							fileEquip = { type:'mt', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
 						}
 					}
 				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixTablet)+suffixTablet.length===containerHtmlFiles[i].file.length)&&(suffixTablet.length<=containerHtmlFiles[i].file.length)) {// check if it is tablet
-					fileEquip = { type:'all', device:'tablet', icon:deviceIcons[3], file:fileCurrentId };//TabletのTypeはOnly以外ならいい
+					fileEquip = { type:'all', device:'tablet', icon:deviceIcons[3], file:fileCurrentId };// If Type is other than Only, it is a tablet
 				}
 			}
 			// determine which device [no device sibling]
