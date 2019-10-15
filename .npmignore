@@ -1,6 +1,4 @@
-yarn.lock
-.gitignore
-node_modules
 .git
+node_modules
 app.js
 coverage

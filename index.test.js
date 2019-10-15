@@ -2,11 +2,13 @@
 
 const indexGenerator = require('./index.js');
 
-describe('responsive', () => {
+describe('adaptive', () => {
 	let config = {
-		construction: 'responsive'
+		htmlPath: './sample/',
+		distPath: './sample/',
+		construction: 'adaptive'
 	};
-	test('myTest', () => {
-		expect(indexGenerator(config)).toBe(1);
+	test('test', () => {
+		expect(indexGenerator(config)).toMatchObject();
 	});
 });

@@ -15,8 +15,8 @@
   },
   "scripts": {
     "index": "node app.js",
-    "lint": "yarn eslint ./index.js",
-    "test": "jest"
+    "lint": "eslint ./index.js",
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
