@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-function makeindex (config) {
+function indexGenerator (config) {
 
 	// user settings
 	var htmlPath = config.htmlPath || './html/';
@@ -28,7 +28,7 @@ function makeindex (config) {
 			mutedColor : '#6c757d',
 			listGroupItemHover : ''
 		}
-	}
+	};
 	var darkMode = config.darkMode || false;
 	var colorMode;
 	if(!darkMode) {
@@ -47,7 +47,7 @@ function makeindex (config) {
 			title: '',
 			titleIcon: ''
 		}
-	]
+	];
 
 	// Suffix(adaptive only)
 	var suffixDesktop = config.suffixDesktop || '-desktop.html';
@@ -80,15 +80,15 @@ function makeindex (config) {
 	
 		// commonHTML
 		var htmlContents = [
-			'<!DOCTYPE html><html lang=\"ja\">',
+			'<!DOCTYPE html><html lang="ja">',
 			'<head>',
-				'<meta charset=\"utf-8\">',
-				'<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">',
-				'<link rel=\"icon\" href=\"' + faviconPath + '\">',
+				'<meta charset="utf-8">',
+				'<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">',
+				'<link rel="icon" href="' + faviconPath + '">',
 				'<title>' + headTitle + '</title>',
-				'<link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\">',
-				'<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">',
-				'<link href=\"https://fonts.googleapis.com/css?family=Noto+Sans+JP|Roboto&display=swap\" rel=\"stylesheet\">',
+				'<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">',
+				'<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">',
+				'<link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP|Roboto&display=swap" rel="stylesheet">',
 				'<style>',
 					'html{font-size:.875em;}',
 					'body{background-color:' + colorMode.bodyBg + ';color:' + colorMode.bodyColor + ';font-family:"Roboto","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";}',
@@ -99,20 +99,20 @@ function makeindex (config) {
 				'</style>',
 			'</head>',
 			'<body>',
-				'<div class=\"container pt-5 pb-2\">',
-					'<div class=\"row mb-5\">',
-						'<div class=\"col-sm-12\">',
+				'<div class="container pt-5 pb-2">',
+					'<div class="row mb-5">',
+						'<div class="col-sm-12">',
 							'<h1>' + pageTitle + '</h1>',
 							'<p>' + overview + '</p>',
 		].join('');
 		if (construction == 'adaptive') {
 			htmlContents += [
-				'<h5 class=\"pr-2 pl-2 d-inline-flex align-items-center badge ' + colorMode.badgeClass + '\"><span class=\"mr-1\">Adaptive</span><i class=\"material-icons lead\">' + deviceIcons[1] + '</i><i class=\"material-icons lead\">' + deviceIcons[2] + '</i><i class=\"material-icons lead\">' + deviceIcons[3] + '</i></h5>'
+				'<h5 class="pr-2 pl-2 d-inline-flex align-items-center badge ' + colorMode.badgeClass + '"><span class="mr-1">Adaptive</span><i class="material-icons lead">' + deviceIcons[1] + '</i><i class="material-icons lead">' + deviceIcons[2] + '</i><i class="material-icons lead">' + deviceIcons[3] + '</i></h5>'
 			].join('');
 		}
 		if (construction == 'responsive') {
 			htmlContents += [
-				'<h5 class=\"pr-2 pl-2 d-inline-flex align-items-center badge ' + colorMode.badgeClass + '\"><span class=\"mr-1\">Responsive</span><i class=\"material-icons lead\">' + deviceIcons[0] + '</i></h5>'
+				'<h5 class="pr-2 pl-2 d-inline-flex align-items-center badge ' + colorMode.badgeClass + '"><span class="mr-1">Responsive</span><i class="material-icons lead">' + deviceIcons[0] + '</i></h5>'
 			].join('');
 		}
 		htmlContents += '</div></div>';
@@ -216,69 +216,69 @@ function makeindex (config) {
 			}
 		}
 		// reusable html
-		var listGroupItem = '<div class=\"d-flex justify-content-between list-group-item overflow-hidden p-0 ' + colorMode.borderColor + '\">';
+		var listGroupItem = '<div class="d-flex justify-content-between list-group-item overflow-hidden p-0 ' + colorMode.borderColor + '">';
 		var col8Class = 'col-8 d-md-flex justify-content-between align-items-center p-3 overflow-hidden text-decoration-none ';
 		var col2Class = 'col-2 border-left d-flex justify-content-center justify-content-md-start align-items-center p-3 overflow-hidden text-decoration-none ';
 		//
 		function fileOutput(value) {
 			// reusable html
-			var blankMobile = '<div class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none\"><i class=\"material-icons mr-md-3 muted-color\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline muted-color">Mobile</p></div>';
-			var blankTablet = '<div class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none\"><i class=\"material-icons mr-md-3 muted-color\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline muted-color">Tablet</p></div>';
-			var blankDesktop = '<div class=\"' + col8Class + colorMode.buttonClass + 'pointer-events-none\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0\">';
+			var blankMobile = '<div class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline muted-color">Mobile</p></div>';
+			var blankTablet = '<div class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline muted-color">Tablet</p></div>';
+			var blankDesktop = '<div class="' + col8Class + colorMode.buttonClass + 'pointer-events-none"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0">';
 			if (value.fileIcon) {
-				if (value.fileIcon[iconFileCount] !== undefined) { blankDesktop += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+				if (value.fileIcon[iconFileCount] !== undefined) { blankDesktop += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 			}
-			blankDesktop += '<p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline muted-color">Desktop</p></div></div></div>';
+			blankDesktop += '<p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline muted-color">Desktop</p></div></div></div>';
 	
 			if (fileEquip.type === 'all') {// [All] do not output empty files
 				if (fileEquip.device === 'desktop') {
-					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
+					htmlContents += listGroupItem + '<a href="' + containerHtmlFiles[i].file + '" class="' + col8Class + colorMode.borderColor + colorMode.buttonClass + '"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0 d-flex align-items-center">';
 					if (value.fileIcon) {
-						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 					}
-					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>';
+					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>';
 				} else if (fileEquip.device === 'mobile') {
-					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>';
+					htmlContents += '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>';
 				} else if (fileEquip.device === 'tablet') {
-					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
+					htmlContents += '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
 				}
 			} else if (fileEquip.type === 'dm') {// [Desktop & Mobile] mobile outputs an empty file on the tablet
 				if (fileEquip.device === 'desktop') {
-					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
+					htmlContents += listGroupItem + '<a href="' + containerHtmlFiles[i].file + '" class="' + col8Class + colorMode.borderColor + colorMode.buttonClass + '"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0 d-flex align-items-center">';
 					if (value.fileIcon) {
-						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 					}
-					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>';
+					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>';
 				} else if (fileEquip.device === 'mobile') {
-					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>' + blankTablet + '</div>';
+					htmlContents += '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>' + blankTablet + '</div>';
 				}
 			} else if (fileEquip.type === 'dt') {// [Desktop & Tablet] desktop outputs an empty file on the mobile
 				if (fileEquip.device === 'desktop') {
-					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
+					htmlContents += listGroupItem + '<a href="' + containerHtmlFiles[i].file + '" class="' + col8Class + colorMode.borderColor + colorMode.buttonClass + '"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0 d-flex align-items-center">';
 					if (value.fileIcon) {
-						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 					}
-					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>' + blankMobile;
+					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>' + blankMobile;
 				} else if (fileEquip.device === 'tablet') {
-					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
+					htmlContents += '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
 				}
 			} else if (fileEquip.type === 'mt') {// [Mobile & Tablet] mobile outputs an empty file on the desktop
 				if (fileEquip.device === 'mobile') {
-					htmlContents += listGroupItem + blankDesktop + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>';
+					htmlContents += listGroupItem + blankDesktop + '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>';
 				} else if (fileEquip.device === 'tablet') {
-					htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
+					htmlContents += '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
 				}
 			} else if (fileEquip.type === 'only') {// [ONLY] output two empty files
 				if (fileEquip.device === 'desktop') {
-					htmlContents += listGroupItem + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col8Class + colorMode.borderColor + colorMode.buttonClass + '\"><div class=\"d-flex align-items-center w-md-100 row\"><div class=\"col-9 mb-0 d-flex align-items-center\">';
+					htmlContents += listGroupItem + '<a href="' + containerHtmlFiles[i].file + '" class="' + col8Class + colorMode.borderColor + colorMode.buttonClass + '"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0 d-flex align-items-center">';
 					if (value.fileIcon) {
-						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class=\"material-icons mr-3 display-4 d-none d-md-inline\">' + value.fileIcon[iconFileCount] + '</i>'; }
+						if (value.fileIcon[iconFileCount] !== undefined) { htmlContents += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 					}
-					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class=\"d-flex align-items-center justify-content-center justify-content-md-start col-3\"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>' + blankMobile + blankTablet + '</div>';
+					htmlContents += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3">' + deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline">Desktop</p></div></div></a>' + blankMobile + blankTablet + '</div>';
 				} else if (fileEquip.device === 'mobile') {
-					htmlContents += listGroupItem + blankDesktop + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>' + blankTablet + '</div>';
+					htmlContents += listGroupItem + blankDesktop + '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline">Mobile</p></a>' + blankTablet + '</div>';
 				} else if (fileEquip.device === 'tablet') {
-					htmlContents += listGroupItem + blankDesktop + blankMobile + '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"' + col2Class + colorMode.borderColor + colorMode.buttonClass + '\"><i class=\"material-icons mr-md-3\">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
+					htmlContents += listGroupItem + blankDesktop + blankMobile + '<a href="' + containerHtmlFiles[i].file + '" class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + '"><i class="material-icons mr-md-3">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline">Tablet</p></a></div>';
 				}
 			}
 		}
@@ -287,15 +287,15 @@ function makeindex (config) {
 		// ====================================================================================
 		if (construction == 'adaptive') {
 			prefix.forEach( function(value) {
-				htmlContents += '<div class=\"row mb-5\"><div class=\"col-sm-12\">';
+				htmlContents += '<div class="row mb-5"><div class="col-sm-12">';
 				if(value.title !== undefined) {// title available
-					htmlContents += '<div class=\"d-flex align-items-center mb-3\">';
+					htmlContents += '<div class="d-flex align-items-center mb-3">';
 					if(value.titleIcon !== undefined) {// titleIcon available
-						htmlContents += ['<i class=\"material-icons mr-1\">' + value.titleIcon + '</i>'].join('');
+						htmlContents += ['<i class="material-icons mr-1">' + value.titleIcon + '</i>'].join('');
 					}
-					htmlContents += ['<h2 class=\"mb-0\">' + value.title + '</h2></div>'].join('');
+					htmlContents += ['<h2 class="mb-0">' + value.title + '</h2></div>'].join('');
 				}
-				htmlContents += '<div class=\"list-group\">';
+				htmlContents += '<div class="list-group">';
 				for (i in containerHtmlFiles) {
 					if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
 						fileSort(value);
@@ -311,35 +311,35 @@ function makeindex (config) {
 		// ====================================================================================
 		if (construction == 'responsive') {
 			prefix.forEach( function(value) {
-				htmlContents += '<div class=\"row mb-5\"><div class=\"col-sm-12\">';
+				htmlContents += '<div class="row mb-5"><div class="col-sm-12">';
 				if(value.title !== undefined) {// title available
-					htmlContents += '<div class=\"d-flex align-items-center mb-3\">';
+					htmlContents += '<div class="d-flex align-items-center mb-3">';
 					if(value.titleIcon !== undefined) {// titleIcon available
-						htmlContents += ['<i class=\"material-icons mr-1\">' + value.titleIcon + '</i>'].join('');
+						htmlContents += ['<i class="material-icons mr-1">' + value.titleIcon + '</i>'].join('');
 					}
-					htmlContents += ['<h2 class=\"mb-0\">' + value.title + '</h2></div>'].join('');
+					htmlContents += ['<h2 class="mb-0">' + value.title + '</h2></div>'].join('');
 				}
 				if(value.fileIcon !== undefined) {// icon available
-					htmlContents += '<div class=\"row mb-5\">';
+					htmlContents += '<div class="row mb-5">';
 					var iconFileCount = 0;
 					for (i in containerHtmlFiles) {
 						if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
-							htmlContents += '<div class=\"col-md-3 mt-2 mb-2\"><a href=\"' + containerHtmlFiles[i].file + '\" class=\"h-100 btn btn-block list-group-item text-center pt-4 pb-4 pl-2 pr-2 ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '\"><div class=\"mb-1\">';
+							htmlContents += '<div class="col-md-3 mt-2 mb-2"><a href="' + containerHtmlFiles[i].file + '" class="h-100 btn btn-block list-group-item text-center pt-4 pb-4 pl-2 pr-2 ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '"><div class="mb-1">';
 							if (value.fileIcon[iconFileCount] !== undefined) {
-								htmlContents += '<i class=\"material-icons display-4\">' + value.fileIcon[iconFileCount] + '</i>';
+								htmlContents += '<i class="material-icons display-4">' + value.fileIcon[iconFileCount] + '</i>';
 							}
-							htmlContents += '</div><h2 class=\"mb-0\">' + containerHtmlFiles[i].title + '</h2><div><small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a></div>';
+							htmlContents += '</div><h2 class="mb-0">' + containerHtmlFiles[i].title + '</h2><div><small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a></div>';
 							iconFileCount++;
 						}
 					}
 					htmlContents += '</div>';
 				} else {// icon not available
 					htmlContents += [
-						'<div class=\"list-group\">'
+						'<div class="list-group">'
 					].join('');
 					for (i in containerHtmlFiles) {
 						if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
-							htmlContents += '<a href=\"' + containerHtmlFiles[i].file + '\" class=\"list-group-item list-group-item-action d-md-flex justify-content-between align-items-center ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '\">' + containerHtmlFiles[i].title + '<div> <small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a>';
+							htmlContents += '<a href="' + containerHtmlFiles[i].file + '" class="list-group-item list-group-item-action d-md-flex justify-content-between align-items-center ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '">' + containerHtmlFiles[i].title + '<div> <small class="muted-color">' + containerHtmlFiles[i].file + '</small></div></a>';
 						}
 					}
 					htmlContents += '</div>';
@@ -348,12 +348,12 @@ function makeindex (config) {
 			});
 		}
 		// commonHTML
-		htmlContents += '<div class=\"row\"><div class=\"col-sm-12\"><dl><dt>' + disclaimerTitle + '</dt><dd>' + disclaimerDesc + '</dd></dl><hr class=\"' + colorMode.borderColor + '\"><p class=\"muted-color text-center\"><small>' + copyright + '</small></p></div></div></div></body></html>';
+		htmlContents += '<div class="row"><div class="col-sm-12"><dl><dt>' + disclaimerTitle + '</dt><dd>' + disclaimerDesc + '</dd></dl><hr class="' + colorMode.borderColor + '"><p class="muted-color text-center"><small>' + copyright + '</small></p></div></div></div></body></html>';
 		fs.writeFile(distPath + fileName, htmlContents, function (err) {
 			if (err) throw err;
 		});
 	});
 	
-};
+}
 
-module.exports = makeindex;
+module.exports = indexGenerator;

@@ -1,13 +1,13 @@
-# makeindex
+# index-generator
 
 Create a table of contents file that summarizes the links to the target file.  
 
 ## Usage
 
 ```JavaScript
-const makeindex = require('makeindex');
+const indexGenerator = require('index-generator');
 
-makeindex();
+indexGenerator();
 ```
 
 ### Config
@@ -15,7 +15,7 @@ makeindex();
 All configs sample  
 
 ```JavaScript
-makeindex({
+indexGenerator({
     htmlPath: './html/',
     distPath: './dist/',
     fileName: 'index.html',
