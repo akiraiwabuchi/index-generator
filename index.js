@@ -171,19 +171,19 @@ function indexGenerator (config) {
 					if (containerHtmlFiles[fileNextNext] !== undefined){// If the next of the following files exists
 						let fileNextNextId = containerHtmlFiles[fileNextNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
 						if (fileCurrentId === fileNextNextId) {// The current file name is the next next file name [Desktop & Mobile & Tablet]
-							fileEquip = { type:'all', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
+							fileEquip = { type:'all', device:'desktop', icon:deviceIcons[1], file:containerHtmlFiles[i].file };
 						} else {// The next next file is another file [Desktop & Mobile or Tablet]
 							if ((containerHtmlFiles[fileNext].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[fileNext].file.length)&&(suffixMobile.length<=containerHtmlFiles[fileNext].file.length)) {// Determine if next file is mobile
-								fileEquip = { type:'dm', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
+								fileEquip = { type:'dm', device:'desktop', icon:deviceIcons[1], file:containerHtmlFiles[i].file };
 							} else {// dt
-								fileEquip = { type:'dt', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
+								fileEquip = { type:'dt', device:'desktop', icon:deviceIcons[1], file:containerHtmlFiles[i].file };
 							}
 						}
 					} else {// The following next file does not exist [Desktop & Mobile or Tablet]
 						if ((containerHtmlFiles[fileNext].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[fileNext].file.length)&&(suffixMobile.length<=containerHtmlFiles[fileNext].file.length)) {// Determine if next file is mobile
-							fileEquip = { type:'dm', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
+							fileEquip = { type:'dm', device:'desktop', icon:deviceIcons[1], file:containerHtmlFiles[i].file };
 						} else {// dt
-							fileEquip = { type:'dt', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
+							fileEquip = { type:'dt', device:'desktop', icon:deviceIcons[1], file:containerHtmlFiles[i].file };
 						}
 					}
 				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// check if it is mobile
@@ -192,32 +192,32 @@ function indexGenerator (config) {
 						let filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
 						if (fileCurrentId === filePrevId) {// The current file name is the same as the previous file [Desktop & Mobile]
 							if (fileCurrentId === fileNextId) {// [Desktop & Mobile & Tablet]
-								fileEquip = { type:'all', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
+								fileEquip = { type:'all', device:'mobile', icon:deviceIcons[2], file:containerHtmlFiles[i].file };
 							} else {// [Desktop & Mobile]
-								fileEquip = { type:'dm', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
+								fileEquip = { type:'dm', device:'mobile', icon:deviceIcons[2], file:containerHtmlFiles[i].file };
 							}
 						} else {// Current file name does not match previous file
 							if (fileCurrentId === fileNextId) {// The current file name is the same as [Mobile & Tablet]
-								fileEquip = { type:'mt', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
+								fileEquip = { type:'mt', device:'mobile', icon:deviceIcons[2], file:containerHtmlFiles[i].file };
 							}
 						}
 					} else {// If there is no previous file and the next file exists
 						if (fileCurrentId === fileNextId) {// The current file name is the same as [Mobile & Tablet]
-							fileEquip = { type:'mt', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
+							fileEquip = { type:'mt', device:'mobile', icon:deviceIcons[2], file:containerHtmlFiles[i].file };
 						}
 					}
 				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixTablet)+suffixTablet.length===containerHtmlFiles[i].file.length)&&(suffixTablet.length<=containerHtmlFiles[i].file.length)) {// check if it is tablet
-					fileEquip = { type:'all', device:'tablet', icon:deviceIcons[3], file:fileCurrentId };// If Type is other than Only, it is a tablet
+					fileEquip = { type:'all', device:'tablet', icon:deviceIcons[3], file:containerHtmlFiles[i].file };// If Type is other than Only, it is a tablet
 				}
 			}
 			// determine which device [no device sibling]
 			function fileTypeCheckSingle() {
 				if ((containerHtmlFiles[i].file.lastIndexOf(suffixDesktop)+suffixDesktop.length===containerHtmlFiles[i].file.length)&&(suffixDesktop.length<=containerHtmlFiles[i].file.length)) {// check if it is desktop [Desktop Only]
-					fileEquip = { type:'only', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
+					fileEquip = { type:'only', device:'desktop', icon:deviceIcons[1], file:containerHtmlFiles[i].file };
 				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// check if it is mobile [Mobile Only]
-					fileEquip = { type:'only', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
+					fileEquip = { type:'only', device:'mobile', icon:deviceIcons[2], file:containerHtmlFiles[i].file };
 				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixTablet)+suffixTablet.length===containerHtmlFiles[i].file.length)&&(suffixTablet.length<=containerHtmlFiles[i].file.length)) {// check if it is tablet [Tablet Only]
-					fileEquip = { type:'only', device:'tablet', icon:deviceIcons[3], file:fileCurrentId };
+					fileEquip = { type:'only', device:'tablet', icon:deviceIcons[3], file:containerHtmlFiles[i].file };
 				}
 			}
 		}
@@ -360,8 +360,10 @@ function indexGenerator (config) {
 			if (err) throw err;
 		});
 		num++;
+		console.log('1');
 	});
 
+	console.log('2');
 	return num;
 }
 
