@@ -5,9 +5,9 @@ const fs = require('fs');
 function indexGenerator (config) {
 
 	// user settings
-	var htmlPath = config.htmlPath || './html/';
-	var distPath = config.distPath || htmlPath;
-	var fileName = config.fileName || 'index.html';
+	let htmlPath = config.htmlPath || './html/';
+	let distPath = config.distPath || htmlPath;
+	let fileName = config.fileName || 'index.html';
 
 	const colorModeSet = {
 		light: {// Light Color
@@ -29,19 +29,19 @@ function indexGenerator (config) {
 			listGroupItemHover : ''
 		}
 	};
-	var darkMode = config.darkMode || false;
-	var colorMode;
+	let darkMode = config.darkMode || false;
+	let colorMode;
 	if(!darkMode) {
 		colorMode = colorModeSet.light;
 	} else {
 		colorMode = colorModeSet.dark;
 	}
 
-	var deviceIcons = ["devices","desktop_mac","phone_iphone","tablet_mac"];
-	var construction = config.construction || 'responsive';
+	let deviceIcons = ["devices","desktop_mac","phone_iphone","tablet_mac"];
+	let construction = config.construction || 'responsive';
 
 	// Prefix
-	var prefix = config.prefixGroup || [
+	let prefix = config.prefixGroup || [
 		{
 			prefixName: '',
 			title: '',
@@ -50,26 +50,32 @@ function indexGenerator (config) {
 	];
 
 	// Suffix(adaptive only)
-	var suffixDesktop = config.suffixDesktop || '-desktop.html';
-	var suffixMobile = config.suffixMobile || '-mobile.html';
-	var suffixTablet = config.suffixTablet || '-tablet.html';
+	let suffixDesktop = config.suffixDesktop || '-desktop.html';
+	let suffixMobile = config.suffixMobile || '-mobile.html';
+	let suffixTablet = config.suffixTablet || '-tablet.html';
 
-	var removeTitle = config.removeTitle || '';
-	var faviconPath = config.faviconPath || '';
-	var headTitle = config.headTitle || 'index';
-	var pageTitle = config.pageTitle || 'pageTitle';
-	var overview = config.overview || 'Overview text sample.';
-	var disclaimerTitle = config.disclaimerTitle || 'Disclaimer title sample';
-	var disclaimerDesc = config.disclaimerDesc || 'Disclaimer description sample.';
-	var copyright = config.copyright || '&copy; CopyrightSample.Inc';
+	let removeTitle = config.removeTitle || '';
+	let faviconPath = config.faviconPath || '';
+	let headTitle = config.headTitle || 'index';
+	let pageTitle = config.pageTitle || 'pageTitle';
+	let overview = config.overview || 'Overview text sample.';
+	let disclaimerTitle = config.disclaimerTitle || 'Disclaimer title sample';
+	let disclaimerDesc = config.disclaimerDesc || 'Disclaimer description sample.';
+	let copyright = config.copyright || '&copy; CopyrightSample.Inc';
 
-	fs.readdir(htmlPath, function (err, data) {
-		if (err) throw err;
-		var containerHtmlFiles = [];
+	// return
+	let num = 0;
+
+	fs.readdir(htmlPath, (err, data) => {
+		if (err) {
+			console.error(err);
+			return;
+		}
+		let containerHtmlFiles = [];
 		for (var i in data) {
 			if (!data[i].match(fileName)) {
-				var src = fs.readFileSync(htmlPath + data[i], 'utf-8');
-				var title = src.match(/<title>.*<\/title>/g);
+				let src = fs.readFileSync(htmlPath + data[i], 'utf-8');
+				let title = src.match(/<title>.*<\/title>/g);
 				title = title[0].replace(/<title>/g, '').replace(removeTitle, '').replace(/<\/title>/g, '');
 				containerHtmlFiles.push({
 					file: data[i],
@@ -79,7 +85,7 @@ function indexGenerator (config) {
 		}
 	
 		// commonHTML
-		var htmlContents = [
+		let htmlContents = [
 			'<!DOCTYPE html><html lang="ja">',
 			'<head>',
 				'<meta charset="utf-8">',
@@ -121,15 +127,15 @@ function indexGenerator (config) {
 		// Adaptive file sort
 		// ====================================================================================
 	
-		var fileEquip;
-		var iconFileCount = 0;
+		let fileEquip;
+		let iconFileCount = 0;
 
 		function fileSort() {
-			var fileNext = parseInt(i) + 1;
-			var fileNextNext = parseInt(i) + 2;
-			var filePrev = parseInt(i) - 1;
-			var fileCurrentId = containerHtmlFiles[i].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// Get current file name（State without suffix）
-			var filePrevId;
+			let fileNext = parseInt(i) + 1;
+			let fileNextNext = parseInt(i) + 2;
+			let filePrev = parseInt(i) - 1;
+			let fileCurrentId = containerHtmlFiles[i].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// Get current file name（State without suffix）
+			let filePrevId;
 	
 			if (containerHtmlFiles[fileNext] !== undefined){// If the file exists after the current file
 				var fileNextId = containerHtmlFiles[fileNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");// Get next file name（State without suffix）
@@ -163,7 +169,7 @@ function indexGenerator (config) {
 				if ((containerHtmlFiles[i].file.lastIndexOf(suffixDesktop)+suffixDesktop.length===containerHtmlFiles[i].file.length)&&(suffixDesktop.length<=containerHtmlFiles[i].file.length)) {// check if it is desktop
 					// Confirm Desktop===========
 					if (containerHtmlFiles[fileNextNext] !== undefined){// If the next of the following files exists
-						var fileNextNextId = containerHtmlFiles[fileNextNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
+						let fileNextNextId = containerHtmlFiles[fileNextNext].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
 						if (fileCurrentId === fileNextNextId) {// The current file name is the next next file name [Desktop & Mobile & Tablet]
 							fileEquip = { type:'all', device:'desktop', icon:deviceIcons[1], file:fileCurrentId };
 						} else {// The next next file is another file [Desktop & Mobile or Tablet]
@@ -183,7 +189,7 @@ function indexGenerator (config) {
 				} else if ((containerHtmlFiles[i].file.lastIndexOf(suffixMobile)+suffixMobile.length===containerHtmlFiles[i].file.length)&&(suffixMobile.length<=containerHtmlFiles[i].file.length)) {// check if it is mobile
 					// Mobile verification zone ==========================================================================
 					if (containerHtmlFiles[filePrev] !== undefined){// If the previous file exists
-						var filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
+						let filePrevId = containerHtmlFiles[filePrev].file.replace(new RegExp(suffixDesktop,"g"), "").replace(new RegExp(suffixTablet,"g"), "").replace(new RegExp(suffixMobile,"g"), "");
 						if (fileCurrentId === filePrevId) {// The current file name is the same as the previous file [Desktop & Mobile]
 							if (fileCurrentId === fileNextId) {// [Desktop & Mobile & Tablet]
 								fileEquip = { type:'all', device:'mobile', icon:deviceIcons[2], file:fileCurrentId };
@@ -216,15 +222,15 @@ function indexGenerator (config) {
 			}
 		}
 		// reusable html
-		var listGroupItem = '<div class="d-flex justify-content-between list-group-item overflow-hidden p-0 ' + colorMode.borderColor + '">';
-		var col8Class = 'col-8 d-md-flex justify-content-between align-items-center p-3 overflow-hidden text-decoration-none ';
-		var col2Class = 'col-2 border-left d-flex justify-content-center justify-content-md-start align-items-center p-3 overflow-hidden text-decoration-none ';
+		let listGroupItem = '<div class="d-flex justify-content-between list-group-item overflow-hidden p-0 ' + colorMode.borderColor + '">';
+		let col8Class = 'col-8 d-md-flex justify-content-between align-items-center p-3 overflow-hidden text-decoration-none ';
+		let col2Class = 'col-2 border-left d-flex justify-content-center justify-content-md-start align-items-center p-3 overflow-hidden text-decoration-none ';
 		//
 		function fileOutput(value) {
 			// reusable html
-			var blankMobile = '<div class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline muted-color">Mobile</p></div>';
-			var blankTablet = '<div class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline muted-color">Tablet</p></div>';
-			var blankDesktop = '<div class="' + col8Class + colorMode.buttonClass + 'pointer-events-none"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0">';
+			let blankMobile = '<div class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline muted-color">Mobile</p></div>';
+			let blankTablet = '<div class="' + col2Class + colorMode.borderColor + colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline muted-color">Tablet</p></div>';
+			let blankDesktop = '<div class="' + col8Class + colorMode.buttonClass + 'pointer-events-none"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0">';
 			if (value.fileIcon) {
 				if (value.fileIcon[iconFileCount] !== undefined) { blankDesktop += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 			}
@@ -304,6 +310,7 @@ function indexGenerator (config) {
 					iconFileCount++;
 				}
 				htmlContents += '</div></div></div>';
+				num++;
 			});
 		}
 		// ====================================================================================
@@ -321,7 +328,7 @@ function indexGenerator (config) {
 				}
 				if(value.fileIcon !== undefined) {// icon available
 					htmlContents += '<div class="row mb-5">';
-					var iconFileCount = 0;
+					let iconFileCount = 0;
 					for (i in containerHtmlFiles) {
 						if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
 							htmlContents += '<div class="col-md-3 mt-2 mb-2"><a href="' + containerHtmlFiles[i].file + '" class="h-100 btn btn-block list-group-item text-center pt-4 pb-4 pl-2 pr-2 ' + colorMode.borderColor + ' overflow-hidden ' + colorMode.buttonClass + '"><div class="mb-1">';
@@ -352,8 +359,10 @@ function indexGenerator (config) {
 		fs.writeFile(distPath + fileName, htmlContents, function (err) {
 			if (err) throw err;
 		});
+		num++;
 	});
-	
+
+	return num;
 }
 
 module.exports = indexGenerator;

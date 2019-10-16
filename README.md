@@ -1,6 +1,10 @@
+![APM](https://img.shields.io/apm/l/index-generator)
+
 # index-generator
 
 Create a table of contents file that summarizes the links to the target file.  
+
+![adaptiveSampleImage](https://i.imgur.com/HeTjC5x.png)
 
 ## Usage
 
