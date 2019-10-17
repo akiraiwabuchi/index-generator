@@ -1,6 +1,6 @@
 {
   "name": "index-generator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create a table of contents file that summarizes the links to the target file.",
   "author": "akiraiwabuchi",
   "license": "MIT",
