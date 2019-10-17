@@ -63,17 +63,12 @@ function indexGenerator (config) {
 	let disclaimerDesc = config.disclaimerDesc || 'Disclaimer description sample.';
 	let copyright = config.copyright || '&copy; CopyrightSample.Inc';
 
-	// return
-	let num = 0;
-
 	fs.readdir(htmlPath, (err, data) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
+		if (err) throw err;
 		let containerHtmlFiles = [];
+		var regexp = new RegExp('^.*\.html');
 		for (var i in data) {
-			if (!data[i].match(fileName)) {
+			if (data[i].match(regexp) && !data[i].match(fileName)) {
 				let src = fs.readFileSync(htmlPath + data[i], 'utf-8');
 				let title = src.match(/<title>.*<\/title>/g);
 				title = title[0].replace(/<title>/g, '').replace(removeTitle, '').replace(/<\/title>/g, '');
@@ -310,7 +305,6 @@ function indexGenerator (config) {
 					iconFileCount++;
 				}
 				htmlContents += '</div></div></div>';
-				num++;
 			});
 		}
 		// ====================================================================================
@@ -359,12 +353,7 @@ function indexGenerator (config) {
 		fs.writeFile(distPath + fileName, htmlContents, function (err) {
 			if (err) throw err;
 		});
-		num++;
-		console.log('1');
 	});
-
-	console.log('2');
-	return num;
 }
 
 module.exports = indexGenerator;
