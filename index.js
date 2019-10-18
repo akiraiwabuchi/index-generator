@@ -66,7 +66,7 @@ function indexGenerator (config) {
 	fs.readdir(htmlPath, (err, data) => {
 		if (err) throw err;
 		let containerHtmlFiles = [];
-		var regexp = new RegExp('^.*\.html');
+		var regexp = new RegExp('^.*.html');
 		for (var i in data) {
 			if (data[i].match(regexp) && !data[i].match(fileName)) {
 				let src = fs.readFileSync(htmlPath + data[i], 'utf-8');
