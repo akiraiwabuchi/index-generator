@@ -4,7 +4,11 @@
 
 Create a table of contents file that summarizes the links to the target file.  
 
-![adaptiveSampleImage](https://i.imgur.com/HeTjC5x.png)
+↓SAMPLE mode adaptive and mode Dark
+![adaptiveSampleImage](https://i.imgur.com/zeiHjO2g.png)
+
+↓SAMPLE mode responsive and mode Light
+![responsiveSampleImage](https://i.imgur.com/WtMGCelg.png)
 
 ## Usage
 
