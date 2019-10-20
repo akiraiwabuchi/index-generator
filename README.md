@@ -97,7 +97,3 @@ There are four settings as described in All configs sample.
 Works only with adaptive.  
 If the file name excluding suffix matches, it will be treated as the same file.  
 Please adjust so that suffix does not overlap with the same file name
-
-## License
-
-MIT
