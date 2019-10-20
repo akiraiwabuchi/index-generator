@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - node
 dist: trusty
-install: true
+install: yarn install
 notifications:
   email: false
 sudo: false
