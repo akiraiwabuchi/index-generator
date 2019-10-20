@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/akiraiwabuchi/index-generator.svg?branch=master)](https://travis-ci.org/akiraiwabuchi/index-generator)
+[![Coverage Status](https://coveralls.io/repos/github/akiraiwabuchi/index-generator/badge.svg?branch=master)](https://coveralls.io/github/akiraiwabuchi/index-generator?branch=master)
 ![APM](https://img.shields.io/apm/l/index-generator)
 
 # index-generator
