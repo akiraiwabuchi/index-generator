@@ -234,11 +234,11 @@ function generationProcess(configSet) {
 				// reusable html
 				let blankMobile = '<div class="' + col2Class + configSet.colorMode.borderColor + configSet.colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + configSet.deviceIcons[2] + '</i><p class="mb-0 d-none d-md-inline muted-color">Mobile</p></div>';
 				let blankTablet = '<div class="' + col2Class + configSet.colorMode.borderColor + configSet.colorMode.buttonClass + ' pointer-events-none"><i class="material-icons mr-md-3 muted-color">' + configSet.deviceIcons[3] + '</i><p class="mb-0 d-none d-md-inline muted-color">Tablet</p></div>';
-				let blankDesktop = '<div class="' + col8Class + configSet.colorMode.buttonClass + 'pointer-events-none"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0">';
+				let blankDesktop = '<div class="' + col8Class + configSet.colorMode.buttonClass + 'pointer-events-none"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0 d-flex align-items-center">';
 				if (value.fileIcon) {
 					if (value.fileIcon[iconFileCount] !== undefined) { blankDesktop += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 				}
-				blankDesktop += '<p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3 muted-color">' + configSet.deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline muted-color">Desktop</p></div></div></div>';
+				blankDesktop += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3 muted-color">' + configSet.deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline muted-color">Desktop</p></div></div></div>';
 		
 				if (fileEquip.type === 'all') {// [All] do not output empty files
 					if (fileEquip.device === 'desktop') {
@@ -291,6 +291,7 @@ function generationProcess(configSet) {
 			// ====================================================================================
 			if (configSet.construction == 'adaptive') {
 				configSet.prefixGroup.forEach( function(value) {
+					iconFileCount = 0;
 					htmlContents += '<div class="row mb-5"><div class="col-sm-12">';
 					if(value.title !== undefined) {// title available
 						htmlContents += '<div class="d-flex align-items-center mb-3">';
@@ -304,8 +305,8 @@ function generationProcess(configSet) {
 						if (!containerHtmlFiles[i].file.indexOf(value.prefixName)) {
 							fileSort(value);
 							fileOutput(value);
+							iconFileCount++;
 						}
-						iconFileCount++;
 						testNumber++;
 					}
 					htmlContents += '</div></div></div>';
