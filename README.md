@@ -52,7 +52,7 @@ indexGenerator({
     suffixDesktop: '-desktop.html',
     suffixMobile: '-mobile.html',
     suffixTablet: '-tablet.html',
-    removeTitle: ' | TEST FILE',
+    removeTitle: [' | TEST FILE', ' | TEST'],
     faviconPath: './image/favicon.ico',
     headTitle: 'headTitle',
     pageTitle: 'pageTitle',
@@ -76,7 +76,7 @@ configs parameters
 | `suffixDesktop`    | string  | '-desktop.html'                  | For adaptive the name of the suffix that is treated as a desktop  |
 | `suffixMobile`     | string  | '-mobile.html'                   | For adaptive the name of the suffix that is treated as a mobile   |
 | `suffixTablet`     | string  | '-tablet.html'                   | For adaptive the name of the suffix that is treated as a tablet   |
-| `removeTitle`      | string  | ''                               | You can specify the character string you want to delete for title |
+| `removeTitle`      | string/object  | ''                        | You can specify the character string you want to delete for title |
 | `faviconPath`      | string  | ''                               | favicon path can be specified                                     |
 | `headTitle`        | string  | 'index'                          | Specify the title string of the head                              |
 | `pageTitle`        | string  | 'pageTitle'                      | Specify h1 of the index                                           |

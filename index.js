@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-async function indexGenerator (configa) {
+async function indexGenerator (userSettings) {
 
 	const colorModeSet = {
 		light: {// Light Color
@@ -25,7 +25,7 @@ async function indexGenerator (configa) {
 		}
 	};
 
-	let config = configa !== undefined ? configa : {};
+	let config = userSettings !== undefined ? userSettings : {};
 	let configSet = {
 		htmlPath: Object.hasOwnProperty.call(config,'htmlPath') ? config.htmlPath : './html/',
 		distPath: Object.hasOwnProperty.call(config,'distPath') ? config.distPath : './html/',
@@ -71,11 +71,21 @@ function generationProcess(configSet) {
 				if (data[i].match(regexp) && !data[i].match(configSet.fileName)) {
 					let src = fs.readFileSync(configSet.htmlPath + data[i], 'utf-8');
 					let title = src.match(/<title>.*<\/title>/g);
-					title = title[0].replace(/<title>/g, '').replace(configSet.removeTitle, '').replace(/<\/title>/g, '');
+					title = title[0].replace(/<title>/g, '').replace(/<\/title>/g, '');
 					containerHtmlFiles.push({
 						file: data[i],
 						title: title
 					});
+				}
+			}
+			// replace
+			for (var r in containerHtmlFiles) {
+				if (Array.isArray(configSet.removeTitle) && Object.keys(configSet.removeTitle).length > 0) {
+					for (let num in configSet.removeTitle) {
+						containerHtmlFiles[r].title = containerHtmlFiles[r].title.replace(configSet.removeTitle[num], '');
+					}
+				} else {
+					containerHtmlFiles[r].title = containerHtmlFiles[r].title.replace(configSet.removeTitle, '');
 				}
 			}
 		

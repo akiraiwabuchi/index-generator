@@ -87,7 +87,7 @@ describe('adaptive', () => {
 					titleIcon: 'create'
 				}
 			],
-			removeTitle: ' | TEST FILE',
+			removeTitle: [' | TEST FILE', ' | TEST'],
 			faviconPath: './image/favicon.ico'
 		});
 		expect(result).toBe(60);
