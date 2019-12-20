@@ -227,8 +227,8 @@ function generationProcess(configSet) {
 			}
 			// reusable html
 			let listGroupItem = '<div class="d-flex justify-content-between list-group-item overflow-hidden p-0 ' + configSet.colorMode.borderColor + '">';
-			let col8Class = 'col-8 d-md-flex justify-content-between align-items-center p-3 overflow-hidden text-decoration-none ';
-			let col2Class = 'col-2 border-left d-flex justify-content-center justify-content-md-start align-items-center p-3 overflow-hidden text-decoration-none ';
+			let col8Class = 'col-8 d-md-flex justify-content-between align-items-center p-2 pl-3 overflow-hidden text-decoration-none ';
+			let col2Class = 'col-2 border-left d-flex justify-content-center justify-content-md-start align-items-center p-2 pl-3 overflow-hidden text-decoration-none ';
 			//
 			function fileOutput(value) {
 				// reusable html
