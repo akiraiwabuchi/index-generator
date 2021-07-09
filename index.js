@@ -71,7 +71,11 @@ function generationProcess(configSet) {
 				if (data[i].match(regexp) && !data[i].match(configSet.fileName)) {
 					let src = fs.readFileSync(configSet.htmlPath + data[i], 'utf-8');
 					let title = src.match(/<title>.*<\/title>/g);
-					title = title[0].replace(/<title>/g, '').replace(/<\/title>/g, '');
+					if(title != null) {
+						title = title[0].replace(/<title>/g, '').replace(/<\/title>/g, '');
+					} else {
+						title = data[i].replace(/.html/g, '');
+					}
 					containerHtmlFiles.push({
 						file: data[i],
 						title: title
@@ -88,7 +92,7 @@ function generationProcess(configSet) {
 					containerHtmlFiles[r].title = containerHtmlFiles[r].title.replace(configSet.removeTitle, '');
 				}
 			}
-		
+
 			// commonHTML
 			let htmlContents = [
 				'<!DOCTYPE html><html lang="ja">',
@@ -127,21 +131,21 @@ function generationProcess(configSet) {
 				].join('');
 			}
 			htmlContents += '</div></div>';
-		
+
 			// ====================================================================================
 			// Adaptive file sort
 			// ====================================================================================
-		
+
 			let fileEquip;
 			let iconFileCount = 0;
-	
+
 			function fileSort() {
 				let fileNext = parseInt(i) + 1;
 				let fileNextNext = parseInt(i) + 2;
 				let filePrev = parseInt(i) - 1;
 				let fileCurrentId = containerHtmlFiles[i].file.replace(new RegExp(configSet.suffixDesktop,"g"), "").replace(new RegExp(configSet.suffixTablet,"g"), "").replace(new RegExp(configSet.suffixMobile,"g"), "");// Get current file name（State without suffix）
 				let filePrevId;
-		
+
 				if (containerHtmlFiles[fileNext] !== undefined){// If the file exists after the current file
 					var fileNextId = containerHtmlFiles[fileNext].file.replace(new RegExp(configSet.suffixDesktop,"g"), "").replace(new RegExp(configSet.suffixTablet,"g"), "").replace(new RegExp(configSet.suffixMobile,"g"), "");// Get next file name（State without suffix）
 					if (fileCurrentId === fileNextId) {// The current file name is the same as the following file
@@ -239,7 +243,7 @@ function generationProcess(configSet) {
 					if (value.fileIcon[iconFileCount] !== undefined) { blankDesktop += '<i class="material-icons mr-3 display-4 d-none d-md-inline">' + value.fileIcon[iconFileCount] + '</i>'; }
 				}
 				blankDesktop += '<div><p class="mb-0">' + containerHtmlFiles[i].title + '</p><small class="muted-color d-none d-md-inline">' + fileEquip.file + '</small></div></div><div class="d-flex align-items-center justify-content-center justify-content-md-start col-3"><i class="material-icons mr-md-3 muted-color">' + configSet.deviceIcons[1] + '</i><p class="mb-0 d-none d-md-inline muted-color">Desktop</p></div></div></div>';
-		
+
 				if (fileEquip.type === 'all') {// [All] do not output empty files
 					if (fileEquip.device === 'desktop') {
 						htmlContents += listGroupItem + '<a href="' + containerHtmlFiles[i].file + '" class="' + col8Class + configSet.colorMode.borderColor + configSet.colorMode.buttonClass + '"><div class="d-flex align-items-center w-md-100 row"><div class="col-9 mb-0 d-flex align-items-center">';
